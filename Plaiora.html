@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ Futuristic Video Player</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --accent: #00ffe1;
+      --text: #ffffff;
+      --control-bg: #1a1a1a;
+      --highlight: #ff00c8;
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+      transition: background-color 0.3s ease-in-out;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      color: var(--accent);
+      font-size: 2rem;
+      text-shadow: 0 0 5px var(--accent);
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px var(--accent); }
+      to { text-shadow: 0 0 20px var(--highlight); }
+    }
+    .video-container {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 20px var(--accent);
+      backdrop-filter: blur(12px);
+      background: var(--glass);
+      border: 2px solid var(--accent);
+      animation: pulse 3s infinite alternate;
+    }
+    @keyframes pulse {
+      from { box-shadow: 0 0 10px var(--accent); }
+      to { box-shadow: 0 0 30px var(--highlight); }
+    }
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: black;
+      cursor: pointer;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--control-bg);
+      padding: 0.5rem;
+      flex-wrap: wrap;
+      border-top: 2px solid var(--accent);
+    }
+    .controls button,
+    .controls input[type="range"],
+    .controls select {
+      background: var(--glass);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin: 0.25rem;
+      padding: 4px 8px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    .controls input[type="range"] {
+      flex: 1;
+    }
+    .controls button:hover,
+    .controls select:hover {
+      background-color: var(--accent);
+      color: black;
+    }
+    #upload, #subtitlesInput, #bgCustomizer {
+      margin-top: 0.5rem;
+      color: var(--accent);
+    }
+    .volume-container {
+      display: flex;
+      align-items: center;
+    }
+    .volume-container input[type="range"] {
+      width: 100px;
+    }
+    .time-display {
+      font-size: 0.9rem;
+      color: var(--highlight);
+      margin: 0 10px;
+    }
+    .screenshot {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: var(--accent);
+      color: black;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .theme-customizer {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .theme-customizer label {
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Futuristic Video Player</h1>
+  <p style="margin-bottom: 10px; color: var(--highlight); animation: glow 1.5s infinite alternate;">
+    With glowing effects and smooth animations
+  </p>
+  <div class="video-container">
+    <video id="video" controlslist="nodownload nofullscreen noremoteplayback">
+      <source id="videoSource" src="" type="video/mp4">
+      <track id="subtitleTrack" kind="subtitles" label="English" srclang="en" default>
+      Your browser does not support HTML video.
+    </video>
+    <button class="screenshot" onclick="takeScreenshot()">📸 Screenshot</button>
+    <div class="controls">
+      <button onclick="togglePlay()">▶️/⏸</button>
+      <input type="range" id="progressBar" value="0" />
+      <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+      <button onclick="toggleFullscreen()">🖥️ Fullscreen</button>
+      <button onclick="toggleMute()">🔇/🔊</button>
+      <div class="volume-container">
+        🔊<input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+      </div>
+      <select id="speedControl">
+        <option value="0.5">0.5x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+      <button onclick="toggleTheaterMode()">🎮 Theater</button>
+      <button onclick="togglePip()">🪟 PiP</button>
+      <button onclick="toggleLoop()">🔁 Loop</button>
+      <button onclick="rewind(10)">⏪ 10s</button>
+      <button onclick="forward(10)">10s ⏩</button>
+      <button onclick="openAIChat()">💬 Ask AI</button>
+    </div>
+  </div>
+  <input type="file" id="upload" accept="video/*" />
+  <input type="file" id="subtitlesInput" accept=".vtt,.srt" />
+  <div class="theme-customizer">
+    <label for="bgCustomizer">🎨 Background:</label>
+    <select id="bgCustomizer">
+      <option value="#0f0f0f">Default</option>
+      <option value="#1a0033">Purple Haze</option>
+      <option value="#001f3f">Deep Blue</option>
+      <option value="#003300">Neo Green</option>
+      <option value="#330000">Crimson Pulse</option>
+    </select>
+  </div>
+  <script>
+    const video = document.getElementById('video');
+    const upload = document.getElementById('upload');
+    const subtitlesInput = document.getElementById('subtitlesInput');
+    const progressBar = document.getElementById('progressBar');
+    const speedControl = document.getElementById('speedControl');
+    const subtitleTrack = document.getElementById('subtitleTrack');
+    const volumeControl = document.getElementById('volumeControl');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const bgCustomizer = document.getElementById('bgCustomizer');
+
+    upload.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        video.src = url;
+        video.load();
+        video.play();
+      }
+    });
+
+    subtitlesInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        subtitleTrack.src = url;
+        video.textTracks[0].mode = 'showing';
+      }
+    });
+
+    function togglePlay() {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+
+    video.addEventListener("click", togglePlay);
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        video.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function toggleMute() {
+      video.muted = !video.muted;
+    }
+
+    function toggleTheaterMode() {
+      document.body.classList.toggle('theater');
+      document.body.style.backgroundColor = document.body.classList.contains('theater') ? '#000' : 'var(--bg)';
+    }
+
+    function togglePip() {
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      } else {
+        video.requestPictureInPicture();
+      }
+    }
+
+    function takeScreenshot() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const link = document.createElement('a');
+      link.download = 'screenshot.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    function toggleLoop() {
+      video.loop = !video.loop;
+    }
+
+    function rewind(seconds) {
+      video.currentTime -= seconds;
+    }
+
+    function forward(seconds) {
+      video.currentTime += seconds;
+    }
+
+    function openAIChat() {
+      const query = prompt("Ask something about this video (e.g., summarize, explain, translate):");
+      if (query) {
+        alert("This would send to ChatGPT: " + query);
+      }
+    }
+
+    speedControl.addEventListener('change', () => {
+      video.playbackRate = parseFloat(speedControl.value);
+    });
+
+    volumeControl.addEventListener('input', () => {
+      video.volume = parseFloat(volumeControl.value);
+    });
+
+    video.addEventListener('timeupdate', () => {
+      const progress = (video.currentTime / video.duration) * 100;
+      progressBar.value = progress;
+      const current = formatTime(video.currentTime);
+      const total = formatTime(video.duration);
+      timeDisplay.textContent = `${current} / ${total}`;
+    });
+
+    progressBar.addEventListener('input', () => {
+      const time = (progressBar.value / 100) * video.duration;
+      video.currentTime = time;
+    });
+
+    bgCustomizer.addEventListener('change', () => {
+      document.body.style.backgroundColor = bgCustomizer.value;
+    });
+
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+  </script>
+</body>
+</html>
